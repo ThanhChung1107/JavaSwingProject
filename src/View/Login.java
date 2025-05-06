@@ -36,9 +36,6 @@ public class Login extends JFrame {
 	public JPasswordField textFieldpass;
 	public JLabel messageLabel;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

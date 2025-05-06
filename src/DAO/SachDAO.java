@@ -137,4 +137,40 @@ public class SachDAO {
 		}
 		return false;
 	}
+	public static int getSoLuongTon(String maSach) throws SQLException {
+		String sql = "SELECT SoLuongTon FROM SACH WHERE MaSach = ?";
+        Connection connection = ConnectDB.getConnection();
+        int sl = 0;
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, maSach);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                sl = rs.getInt("SoLuongTon");
+            }
+        }
+        return sl;
+	}
+	public static boolean kiemTraSoLuongTon(String maSach, int soLuongMua) throws SQLException {
+        String sql = "SELECT SoLuongTon FROM SACH WHERE MaSach = ?";
+        Connection connection = ConnectDB.getConnection();
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, maSach);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("SoLuongTon") >= soLuongMua;
+            }
+        }
+        return false;
+    }
+    
+    // Cập nhật số lượng tồn kho sau khi đặt hàng
+    public boolean capNhatSoLuongTon(String maSach, int soLuongBan) throws SQLException {
+        String sql = "UPDATE SACH SET SoLuongTon = SoLuongTon - ? WHERE MaSach = ?";
+        Connection connection = ConnectDB.getConnection();
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, soLuongBan);
+            stmt.setString(2, maSach);
+            return stmt.executeUpdate() > 0;
+        }
+    }
 }

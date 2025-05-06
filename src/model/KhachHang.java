@@ -6,18 +6,18 @@ public class KhachHang {
 	private String maKH;
 	private String tenKH;
 	private String diaChi;
-	private String SDT;
+	private String soDienThoai;
 	private String email;
-	private Date NS;
+	private Date ngaySinh;
 	public KhachHang() {
 	}
-	public KhachHang(String maKH, String tenKH, String diaChi, String sDT, String email, Date nS) {
+	public KhachHang(String maKH, String tenKH, String diaChi, String soDienThoai, String email, Date ngaySinh) {
 		this.maKH = maKH;
 		this.tenKH = tenKH;
 		this.diaChi = diaChi;
-		SDT = sDT;
+		this.soDienThoai = soDienThoai;
 		this.email = email;
-		NS = nS;
+		this.ngaySinh = ngaySinh;
 	}
 	public String getMaKH() {
 		return maKH;
@@ -37,11 +37,11 @@ public class KhachHang {
 	public void setDiaChi(String diaChi) {
 		this.diaChi = diaChi;
 	}
-	public String getSDT() {
-		return SDT;
+	public String getSoDienThoai() {
+		return soDienThoai;
 	}
-	public void setSDT(String sDT) {
-		SDT = sDT;
+	public void setSoDienThoai(String soDienThoai) {
+		this.soDienThoai = soDienThoai;
 	}
 	public String getEmail() {
 		return email;
@@ -49,11 +49,11 @@ public class KhachHang {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public Date getNS() {
-		return NS;
+	public Date getNgaySinh() {
+		return ngaySinh;
 	}
-	public void setNS(Date nS) {
-		NS = nS;
+	public void setNgaySinh(Date ngaySinh) {
+		this.ngaySinh = ngaySinh;
 	}
 	
 	

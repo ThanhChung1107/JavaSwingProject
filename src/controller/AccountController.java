@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 
+import com.mysql.cj.Session;
+
 import DAO.AccountDAO;
 import View.Login;
 import View.TrangChu;
@@ -43,6 +45,7 @@ public class AccountController implements ActionListener{
 	    String password = view.textFieldpass.getText();
 		for (Account account : list) {
 			if(username.equals(account.getUsername())&&password.equals(account.getPassword())) {
+				model.Session.currentUser = account.getNhanvien();
 				view.messageLabel.setText("Đăng nhập thành công!");
 		        view.messageLabel.setForeground(Color.GREEN);
 		        

@@ -27,7 +27,6 @@ public class CategoryManager extends JPanel {
     public CategoryManager() {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        // Font và màu nền chính
         Font font = new Font("Segoe UI", Font.PLAIN, 16);
         Color bgColor = new Color(245, 250, 255);
         Color panelColor = new Color(200, 255, 200);
@@ -222,7 +221,7 @@ public class CategoryManager extends JPanel {
             }
         }
     }
-
+   
     public void lamMoiForm() {
         txtMaDanhMuc.setText("");
         txtTenDanhMuc.setText("");

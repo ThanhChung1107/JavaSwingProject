@@ -130,7 +130,7 @@ public class TrangChu extends JFrame {
         } catch (Exception e) {
             System.err.println("Không tìm thấy icon: " + iconPath);
             e.printStackTrace();
-        }
+        }	
         
         button.addMouseListener(new MouseAdapter() {
             @Override
@@ -203,10 +203,20 @@ public class TrangChu extends JFrame {
                 contentPanel.add(new AuthorManager());
                 break;
             case "Khách hàng":
-                System.out.println("Mở quản lý khách hàng");
+                try {
+                	UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                	contentPanel.add(new CustomerManager(),BorderLayout.CENTER);
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
                 break;
             case "Đơn hàng":
-                System.out.println("Mở quản lý đơn hàng");
+                try {
+                	UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                	contentPanel.add(new OrderManager(),BorderLayout.CENTER);
+				} catch (Exception e3) {
+					// TODO: handle exception
+				}
                 break;
             case "Báo cáo":
                 System.out.println("Mở báo cáo");

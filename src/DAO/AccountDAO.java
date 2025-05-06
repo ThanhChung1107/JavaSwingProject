@@ -18,7 +18,7 @@ public class AccountDAO {
 	}
 	public List<Account> getAll() throws SQLException{
 		List<Account> listacc = new ArrayList<Account>();
-		String sql = "select a.*, n.TenNV" + 
+		String sql = "select a.*,n.MaNV, n.TenNV" + 
 					" from ACCOUNT a" + 
 					" LEFT JOIN NHANVIEN n ON a.MaNV = n.MaNV";
 		try (Connection con = ConnectDB.getConnection();
