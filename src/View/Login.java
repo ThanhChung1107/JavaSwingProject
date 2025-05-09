@@ -65,7 +65,7 @@ public class Login extends JFrame {
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(200, 255, 200));
-		panel.setBounds(0, 0, 320, 379);
+		panel.setBounds(0, 0, 305, 379);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		

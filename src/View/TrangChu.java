@@ -176,59 +176,66 @@ public class TrangChu extends JFrame {
             contentPanel.removeAll();
             String command = button.getText();
             switch (command) {
-            case "Trang chủ":
-                contentPanel.add(new Introduce(), BorderLayout.CENTER);
-                break;
-            case "Quản lý sách":
-            	try {
-            	    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); // hoặc WindowsLookAndFeel
-            	} catch (Exception ex) {
-            	    ex.printStackTrace();
-            	}
-
-                contentPanel.add(new BookManager(),BorderLayout.CENTER);
-                break;
-            case "Danh mục":
-            	try {
-					UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-					contentPanel.add(new CategoryManager(),BorderLayout.CENTER);
-	                break;
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-						| UnsupportedLookAndFeelException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-                
-            case "Tác giả":
-                contentPanel.add(new AuthorManager());
-                break;
-            case "Khách hàng":
-                try {
-                	UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                	contentPanel.add(new CustomerManager(),BorderLayout.CENTER);
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-                break;
-            case "Đơn hàng":
-                try {
-                	UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                	contentPanel.add(new OrderManager(),BorderLayout.CENTER);
-				} catch (Exception e3) {
-					// TODO: handle exception
-				}
-                break;
-            case "Báo cáo":
-                System.out.println("Mở báo cáo");
-                break;
-            case "Cài đặt":
-                System.out.println("Mở cài đặt");
-                break;
-        }
-            contentPanel.revalidate(); 
-            contentPanel.repaint(); 
+                case "Trang chủ":
+                    contentPanel.add(new Introduce(), BorderLayout.CENTER);
+                    break;
+                case "Quản lý sách":
+                    try {
+                        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    contentPanel.add(new BookManager(), BorderLayout.CENTER);
+                    break;
+                case "Danh mục":
+                    try {
+                        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                        contentPanel.add(new CategoryManager(), BorderLayout.CENTER);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                    break;
+                case "Tác giả":
+                    contentPanel.add(new AuthorManager(), BorderLayout.CENTER);
+                    break;
+                case "Khách hàng":
+                    try {
+                        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                        contentPanel.add(new CustomerManager(), BorderLayout.CENTER);
+                    } catch (Exception e2) {
+                        e2.printStackTrace();
+                    }
+                    break;
+                case "Đơn hàng":
+                    try {
+                        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                        contentPanel.add(new OrderManager(), BorderLayout.CENTER);
+                    } catch (Exception e3) {
+                        e3.printStackTrace();
+                    }
+                    break;
+                case "Thống kê":
+                    try {
+                        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                        contentPanel.add(new StatisticManager(), BorderLayout.CENTER);
+                    } catch (Exception e3) {
+                        e3.printStackTrace();
+                    }
+                    break;
+                case "Nhân viên":
+                    try {
+                        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                        contentPanel.add(new StaffManager(), BorderLayout.CENTER);
+                    } catch (Exception e3) {
+                        e3.printStackTrace();
+                    }
+                    break;
+            }
+            contentPanel.revalidate();
+            contentPanel.repaint();
         });
     }
+
 
     private void setActiveButton(JButton button) {
         if (currentActiveButton != null) {
