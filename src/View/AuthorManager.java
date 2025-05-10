@@ -63,6 +63,7 @@ public class AuthorManager extends JPanel {
         lblMa.setFont(font);
         txtMaTacGia = new JTextField();
         txtMaTacGia.setFont(font);
+        txtMaTacGia.setEditable(false);
         
         JLabel lblTen = new JLabel("Tên tác giả:");
         lblTen.setFont(font);
@@ -314,6 +315,20 @@ public class AuthorManager extends JPanel {
         } else {
             tacGia.setNgaySinh(null);
         }
+    	tacGia.setAnhTacGia(currentImagePath);
+    	return tacGia;
+    }
+    public TacGia getAuthorForAdd() throws SQLException {
+    	TacGia tacGia = new TacGia();
+    	TacGiaDAO dao = new TacGiaDAO();
+    	tacGia.setMaTacGia(dao.generateMaTacGia());
+    	tacGia.setTenTacGia(txtTenTacGia.getText().trim());
+    	if (dateChooser.getDate() != null) {
+            tacGia.setNgaySinh(new java.sql.Date(dateChooser.getDate().getTime()));
+        } else {
+            tacGia.setNgaySinh(null);
+        }
+    	currentImagePath = "";
     	tacGia.setAnhTacGia(currentImagePath);
     	return tacGia;
     }

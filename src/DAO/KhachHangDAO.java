@@ -120,7 +120,7 @@ public class KhachHangDAO {
         }
     }
 
-    public boolean xoaKhachHang(String maKH) {
+    public boolean xoaKhachHang(String maKH) throws SQLException {
         String sql = "DELETE FROM KHACHHANG WHERE MaKH=?";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -128,9 +128,10 @@ public class KhachHangDAO {
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            throw e; 
         }
     }
+
 
     public List<KhachHang> timKiemKhachHang(String keyword) {
         List<KhachHang> list = new ArrayList<>();

@@ -10,6 +10,7 @@ import model.TheLoai;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.border.Border;
@@ -43,6 +44,7 @@ public class CategoryManager extends JPanel {
         lblMa.setFont(font);
         txtMaDanhMuc = new JTextField();
         txtMaDanhMuc.setFont(font);
+        txtMaDanhMuc.setEditable(false);
 
         JLabel lblTen = new JLabel("Tên danh mục:");
         lblTen.setFont(font);
@@ -198,7 +200,15 @@ public class CategoryManager extends JPanel {
         }
     }
 
-    public TheLoai getTheLoai() {
+    public TheLoai getTheLoaiForAdd() throws SQLException {
+        TheLoai loai = new TheLoai();
+        dao = new TheLoaiDAO();
+        loai.setMaTheLoai(dao.generateMaTL());
+        loai.setTenTheLoai(txtTenDanhMuc.getText().trim());
+        return loai;
+    }
+
+    public TheLoai getTheLoaiForEdit() {
         TheLoai loai = new TheLoai();
         loai.setMaTheLoai(txtMaDanhMuc.getText().trim());
         loai.setTenTheLoai(txtTenDanhMuc.getText().trim());

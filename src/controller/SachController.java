@@ -5,6 +5,7 @@ import model.Sach;
 import DAO.SachDAO;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
@@ -22,7 +23,12 @@ public class SachController implements ActionListener {
         String command = e.getActionCommand();
         switch (command) {
             case "Thêm":
-                themSach();
+			try {
+				themSach();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
                 break;
             case "Sửa":
                 suaSach();
@@ -36,8 +42,8 @@ public class SachController implements ActionListener {
         }
     }
 
-    private void themSach() {
-        Sach sach = view.getSachFromInput();
+    private void themSach() throws SQLException {
+        Sach sach = view.getSachForAdd();
         if (sach == null) {
             view.showMessage("Giá và số lượng phải là số!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;

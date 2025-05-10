@@ -3,9 +3,11 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import DAO.HoaDonDAO;
 import DAO.KhachHangDAO;
 import DAO.SachDAO;
 import controller.OrderController;
+import model.ChiTietHoaDon;
 import model.HoaDon;
 import model.KhachHang;
 import model.Sach;
@@ -34,6 +36,7 @@ public class OrderManager extends JPanel {
     private String customerAddress = "";
     private SachDAO dao;
 	private KhachHangDAO khdao;
+	private HoaDonDAO hddao;
 	public double tongTien;
 	ActionListener ac = (ActionListener) new OrderController(this);
     public OrderManager() {
@@ -59,6 +62,8 @@ public class OrderManager extends JPanel {
         add(tabbedPane, BorderLayout.CENTER);
         addbooksTotable();
         xoaSachChon();
+        loadDanhSachHoaDon();
+//        xemChiTietHoaDon();
     }
     private JPanel createOrderPanel(Color bgColor, Font font) {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
@@ -217,7 +222,6 @@ public class OrderManager extends JPanel {
 
                 buttonPanel.add(btnConfirm);
 
-                // ==== Xử lý tìm kiếm khách hàng ====
                 btnSearch.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -229,7 +233,6 @@ public class OrderManager extends JPanel {
                             return;
                         }
 
-                        // Gọi DAO hoặc danh sách khách hàng để tìm (ví dụ giả định hàm: KhachHangDAO.timTheoSDT)
                         KhachHang kh = null;
 						try {
 							kh = KhachHangDAO.findCustomerByPhone(sdt);
@@ -260,7 +263,6 @@ public class OrderManager extends JPanel {
                 addcus.setVisible(true);
             }
         });
-        // Right: Cart/Invoice
         JPanel panelRight = new JPanel(new BorderLayout(10, 10));
         panelRight.setBackground(bgColor);
         panelRight.setBorder(BorderFactory.createTitledBorder("Chi tiết hóa đơn"));
@@ -272,7 +274,6 @@ public class OrderManager extends JPanel {
         tableCart.setFont(font);
         tableCart.setRowHeight(24);
         tableCart.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        // Set column widths and alignment
         int[] widths = {80, 200, 70, 100, 120, 40};
         for (int i = 0; i < widths.length; i++) {
             if (i < tableCart.getColumnCount()) {
@@ -283,19 +284,13 @@ public class OrderManager extends JPanel {
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
-        // Center for Mã sách, Số lượng
         tableCart.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
         tableCart.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
-        // Right for Đơn giá, Thành tiền
         tableCart.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
         tableCart.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
-        // Optionally hide the last column if not used
-        // tableCart.getColumnModel().getColumn(5).setMinWidth(0);
-        // tableCart.getColumnModel().getColumn(5).setMaxWidth(0);
         JScrollPane scrollCart = new JScrollPane(tableCart);
         panelRight.add(scrollCart, BorderLayout.CENTER);
 
-        // Total + Buttons
         JPanel panelBottom = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
         panelBottom.setBackground(bgColor);
         lblTotal = new JLabel("Tổng cộng: 0 đ");
@@ -345,7 +340,6 @@ public class OrderManager extends JPanel {
         panel.setBackground(bgColor);
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Search panel
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         searchPanel.setBackground(bgColor);
         JTextField txtSearchOrder = new JTextField(20);
@@ -360,7 +354,6 @@ public class OrderManager extends JPanel {
         searchPanel.add(btnSearchOrder);
         panel.add(searchPanel, BorderLayout.NORTH);
 
-        // Orders table
         String[] orderCols = {"Mã hóa đơn", "Ngày lập", "Tổng tiền", "Trạng thái", "Chi tiết"};
         modelOrders = new DefaultTableModel(orderCols, 0) {
             public boolean isCellEditable(int row, int col) { return false; }
@@ -383,31 +376,19 @@ public class OrderManager extends JPanel {
         buttonPanel.add(btnViewDetails);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Add action listener for viewing order details
         btnViewDetails.addActionListener(e -> {
             int selectedRow = tableOrders.getSelectedRow();
             if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(panel, "Vui lòng chọn một hóa đơn để xem chi tiết!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(panel, "Vui lòng chọn hóa đơn để xem chi tiết!");
                 return;
             }
-            // Example data extraction (replace with real data as needed)
-            String storeName = "Nhà sách ABC";
-            String orderTime = tableOrders.getValueAt(selectedRow, 1).toString();
-            String personInCharge = "Nhân viên A";
-            String customer = "Khách lẻ";
-            String total = tableOrders.getValueAt(selectedRow, 2).toString();
-            // Dummy order items (replace with real data)
-            String[][] orderItems = {
-                {"MS001", "Sách A", "2", "50,000", "100,000"},
-                {"MS002", "Sách B", "1", "70,000", "70,000"}
-            };
-            showOrderDetailDialog(panel, storeName, orderTime, personInCharge, customer, orderItems, total, font);
+            String maHD = tableOrders.getValueAt(selectedRow, 0).toString();
+            new OrderController(this).xemChiTietHoaDon(maHD);
         });
 
         return panel;
     }
-
-    private void showOrderDetailDialog(Component parent, String storeName, String orderTime, String personInCharge, String customer, String[][] orderItems, String total, Font font) {
+    public void showOrderDetailDialog(Component parent, String storeName, String orderTime, String personInCharge, String customer, String[][] orderItems, String total, Font font) {
         JDialog dialog = new JDialog(SwingUtilities.getWindowAncestor(parent), "Chi tiết hóa đơn", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setSize(600, 450);
         dialog.setLocationRelativeTo(parent);
@@ -491,7 +472,6 @@ public class OrderManager extends JPanel {
     public int showConfirmDialog(String message, String title) {
         return JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION);
     }
-    //xóa đơn
     public void xoaSachChon() {
         // Lắng nghe sự kiện click vào bảng
         tableCart.addMouseListener(new MouseAdapter() {
@@ -591,7 +571,65 @@ public class OrderManager extends JPanel {
     	kh.setDiaChi(customerAddress);
     	return kh;
     }
-    
+    public void loadDanhSachHoaDon() {
+    	hddao = new HoaDonDAO();
+    	
+	    try {
+	        List<HoaDon> danhSach = hddao.getAllHoaDon(); 
+	        modelOrders.setRowCount(0);
+
+	        for (HoaDon hd : danhSach) {
+	            modelOrders.addRow(new Object[]{
+	                hd.getMaHD(),
+	                new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(hd.getNgayLap()),
+	                String.format("%,.0f VND", hd.getThanhTien()),
+	                "Đã lập",
+	                "Xem"
+	            });
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách hóa đơn: " + e.getMessage());
+	    }
+	}
+	public void xemChiTietHoaDon(String maHD) {
+	    try {
+	        List<ChiTietHoaDon> chiTietList = hddao.getChiTietHoaDon(maHD);
+	        HoaDon hoaDon = hddao.getAllHoaDon().stream()
+	                .filter(hd -> hd.getMaHD().equals(maHD))
+	                .findFirst()
+	                .orElse(null);
+
+	        if (hoaDon == null) {
+	            JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn!");
+	            return;
+	        }
+
+	        String[][] data = new String[chiTietList.size()][5];
+	        for (int i = 0; i < chiTietList.size(); i++) {
+	            ChiTietHoaDon ct = chiTietList.get(i);
+	            data[i][0] = ct.getMaSach();
+	            data[i][1] = ct.getSach().getTenSach();
+	            data[i][2] = String.valueOf(ct.getSoLuong());
+	            data[i][3] = String.format("%,.0f", ct.getDonGia());
+	            data[i][4] = String.format("%,.0f", ct.getThanhTien());
+	        }
+
+	        showOrderDetailDialog(this,
+	            "Nhà sách ABC", 
+	            new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(hoaDon.getNgayLap()),
+	            hoaDon.getNhanVien().getTenNV(),
+	            hoaDon.getKhachHang() != null ? hoaDon.getKhachHang().getTenKH() : "Khách lẻ",
+	            data, 
+	            String.format("%,.0f VND", hoaDon.getThanhTien()),
+	            new Font("Segoe UI", Font.PLAIN, 14)
+	        );
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(this, "Lỗi khi xem chi tiết: " + e.getMessage());
+	    }
+	}
 
 
 

@@ -32,6 +32,20 @@ public class TacGiaDAO {
         }
         return list;
     }
+	public String generateMaTacGia() throws SQLException {
+	    String sql = "SELECT MaTacGia FROM TACGIA ORDER BY MaTacGia DESC LIMIT 1";
+	    Connection conn = ConnectDB.getConnection();
+	    PreparedStatement ps = conn.prepareStatement(sql);
+	    ResultSet rs = ps.executeQuery();
+
+	    String maMoi = "TG001";
+	    if (rs.next()) {
+	        String maCu = rs.getString("MaTacGia");
+	        int so = Integer.parseInt(maCu.substring(2));
+	        maMoi = String.format("TG%03d", ++so);
+	    }
+	    return maMoi;
+	}
 	public boolean insertAuthor(TacGia tacGia) throws SQLException {
 	    String sql = "INSERT INTO TACGIA (MaTacGia, TenTacGia, NgaySinh, ImgPath) VALUES (?, ?, ?, ?)";
 	    

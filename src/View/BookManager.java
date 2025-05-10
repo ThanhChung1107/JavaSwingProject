@@ -8,6 +8,7 @@ import model.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,7 @@ public class BookManager extends JPanel {
         
         panel.add(new JLabel("Mã sách:"));
         tfMaSach = new JTextField();
+        tfMaSach.setEditable(false);
         panel.add(tfMaSach);
      
         panel.add(new JLabel("Tên sách:"));
@@ -330,8 +332,6 @@ public class BookManager extends JPanel {
 
     public Sach getSachFromInput() {
         Sach sach = new Sach();
-        
-        // Xử lý các trường cơ bản
         sach.setMaSach(tfMaSach.getText().trim());
         sach.setTenSach(tfTenSach.getText().trim());
         
@@ -362,6 +362,47 @@ public class BookManager extends JPanel {
         
         String standardizedPath = currentImagePath.replace("\\", "/");
         sach.setImgpath(standardizedPath);
+        return sach;
+    }
+    public Sach getSachForAdd() throws SQLException {
+        Sach sach = new Sach();
+        sachDAO = new SachDAO();
+        sach.setMaSach(sachDAO.generateMaSach());
+        sach.setTenSach(tfTenSach.getText().trim());
+        
+        TheLoai tl = new TheLoai();
+        String tenTheLoai = (String) cbTheLoai.getSelectedItem();
+        tl.setTenTheLoai(tenTheLoai);
+        tl.setMaTheLoai(getMaTheLoaiByTen(tenTheLoai));
+        sach.setMaTheLoai(tl);
+        
+        TacGia tg = new TacGia();
+        String tenTacGia = (String) cbTacGia.getSelectedItem();
+        tg.setTenTacGia(tenTacGia);
+        tg.setMaTacGia(getMaTacGiaByTen(tenTacGia)); 
+        sach.setMaTacGia(tg); 
+        
+        NhaXuatBan nxb = new NhaXuatBan();
+        String tenNXB = (String) cbNhaXuatBan.getSelectedItem();
+        nxb.setTenNXB(tenNXB);
+        nxb.setMaNXB(getMaNXBByTen(tenNXB));
+        sach.setMaNxb(nxb); 
+        
+        try {
+            sach.setGiaban(Double.parseDouble(tfGia.getText().trim()));
+            sach.setSoluong(Integer.parseInt(tfSoLuong.getText().trim()));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        
+        if (currentImagePath != null && !currentImagePath.isEmpty()) {
+            String standardizedPath = currentImagePath.replace("\\", "/");
+            sach.setImgpath(standardizedPath);
+        } else {
+            
+            sach.setImgpath(tfImagePath.getText().trim());
+        }
+
         return sach;
     }
     private String getMaTheLoaiByTen(String tenTheLoai) {

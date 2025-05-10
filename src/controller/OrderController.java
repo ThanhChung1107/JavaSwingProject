@@ -1,6 +1,7 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -38,7 +39,7 @@ public class OrderController implements ActionListener{
 		
 	}
 	private void luuHoaDon() {
-	    // Kiểm tra giỏ hàng có sản phẩm không
+		
 	    if (view.modelCart.getRowCount() == 0) {
 	        JOptionPane.showMessageDialog(view, "Giỏ hàng trống, không thể lưu hóa đơn", 
 	            "Cảnh báo", JOptionPane.WARNING_MESSAGE);
@@ -103,4 +104,64 @@ public class OrderController implements ActionListener{
 	            "Lỗi", JOptionPane.ERROR_MESSAGE);
 	    }
 	}
+	public void loadDanhSachHoaDon() {
+	    try {
+	        List<HoaDon> danhSach = dao.getAllHoaDon(); 
+	        view.modelOrders.setRowCount(0);
+
+	        for (HoaDon hd : danhSach) {
+	            view.modelOrders.addRow(new Object[]{
+	                hd.getMaHD(),
+	                new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(hd.getNgayLap()),
+	                String.format("%,.0f VND", hd.getThanhTien()),
+	                "Đã lập",
+	                "Xem"
+	            });
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(view, "Lỗi khi tải danh sách hóa đơn: " + e.getMessage());
+	    }
+	}
+	public void xemChiTietHoaDon(String maHD) {
+	    try {
+	        List<ChiTietHoaDon> chiTietList = dao.getChiTietHoaDon(maHD);
+	        HoaDon hoaDon = dao.getAllHoaDon().stream()
+	                .filter(hd -> hd.getMaHD().equals(maHD))
+	                .findFirst()
+	                .orElse(null);
+
+	        if (hoaDon == null) {
+	            JOptionPane.showMessageDialog(view, "Không tìm thấy hóa đơn!");
+	            return;
+	        }
+
+	        String[][] data = new String[chiTietList.size()][5];
+	        for (int i = 0; i < chiTietList.size(); i++) {
+	            ChiTietHoaDon ct = chiTietList.get(i);
+	            data[i][0] = ct.getMaSach();
+	            data[i][1] = ct.getSach().getTenSach();
+	            data[i][2] = String.valueOf(ct.getSoLuong());
+	            data[i][3] = String.format("%,.0f", ct.getDonGia());
+	            data[i][4] = String.format("%,.0f", ct.getThanhTien());
+	        }
+
+	        view.showOrderDetailDialog(view, 
+	            "Nhà sách ABC", 
+	            new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(hoaDon.getNgayLap()),
+	            hoaDon.getNhanVien().getTenNV(),
+	            hoaDon.getKhachHang() != null ? hoaDon.getKhachHang().getTenKH() : "Khách lẻ",
+	            data, 
+	            String.format("%,.0f VND", hoaDon.getThanhTien()),
+	            new Font("Segoe UI", Font.PLAIN, 14)
+	        );
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(view, "Lỗi khi xem chi tiết: " + e.getMessage());
+	    }
+	}
+
+
+
 }

@@ -45,6 +45,7 @@ public class CustomerManager extends JPanel {
         lblMaKH.setFont(font);
         txtMaKH = new JTextField();
         txtMaKH.setFont(font);
+        txtMaKH.setEditable(false);
 
         JLabel lblTenKH = new JLabel("Tên KH:");
         lblTenKH.setFont(font);
@@ -140,7 +141,6 @@ public class CustomerManager extends JPanel {
         panelTimKiem.add(txtTimKiem, BorderLayout.CENTER);
         panelTimKiem.add(btnTim, BorderLayout.EAST);
 
-        // Bảng danh sách
         String[] columnNames = {"Mã KH", "Tên KH", "Số ĐT", "Email", "Địa chỉ", "Ngày sinh"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             public boolean isCellEditable(int row, int column) { return false; }
@@ -155,20 +155,25 @@ public class CustomerManager extends JPanel {
         table.setShowVerticalLines(false);
         table.setShowHorizontalLines(true);
 
-        // Sự kiện chọn hàng trong bảng
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 int row = table.getSelectedRow();
                 if (row >= 0) {
+                    // Các trường bắt buộc: set trực tiếp
                     txtMaKH.setText(table.getValueAt(row, 0).toString());
                     txtTenKH.setText(table.getValueAt(row, 1).toString());
                     txtSDT.setText(table.getValueAt(row, 2).toString());
-                    txtEmail.setText(table.getValueAt(row, 3).toString());
                     txtDiaChi.setText(table.getValueAt(row, 4).toString());
-                    txtNgaySinh.setText(table.getValueAt(row, 5).toString());
+
+                    Object email = table.getValueAt(row, 3);
+                    txtEmail.setText(email != null ? email.toString() : "");
+
+                    Object ngaySinh = table.getValueAt(row, 5);
+                    txtNgaySinh.setText(ngaySinh != null ? ngaySinh.toString() : "");
                 }
             }
         });
+
 
         JScrollPane scrollPane = new JScrollPane(table);
 

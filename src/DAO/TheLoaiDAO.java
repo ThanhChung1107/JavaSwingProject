@@ -3,6 +3,7 @@ package DAO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,21 @@ public class TheLoaiDAO {
 
 		return list;
 	}	
+	public String generateMaTL() throws SQLException {
+        String sql = "SELECT MaTheLoai FROM THELOAI ORDER BY MaTheLoai DESC LIMIT 1";
+        Connection connection = ConnectDB.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        String maMoi = "TL001";
+        if (rs.next()) {
+            String maCu = rs.getString("MaTheLoai");
+            int so = Integer.parseInt(maCu.substring(2));
+            so++;
+            maMoi = String.format("TL%03d", so);
+        }
+        return maMoi;
+    }
 	public boolean insert(TheLoai theloai) {
 		try {
 			Connection con = ConnectDB.getConnection();

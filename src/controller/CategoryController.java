@@ -2,6 +2,7 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
@@ -22,7 +23,12 @@ public class CategoryController implements ActionListener{
 		String cmd = e.getActionCommand();
 		switch(cmd) {
 		case "Thêm":
-			insertCate();
+			try {
+				insertCate();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			break;
 		case "Sửa":
 			updateCate();
@@ -35,8 +41,8 @@ public class CategoryController implements ActionListener{
 			break;
 		}
 	}
-	private void insertCate() {
-		TheLoai tl = view.getTheLoai();
+	private void insertCate() throws SQLException {
+		TheLoai tl = view.getTheLoaiForAdd();
 		try {
 			for (int i = 0; i < view.tableModel.getRowCount(); i++) {
 	            if (tl.getMaTheLoai().equals(view.tableModel.getValueAt(i, 0))) {
@@ -63,7 +69,7 @@ public class CategoryController implements ActionListener{
 	            return;
 	        }
 
-	        TheLoai theloai = view.getTheLoai();
+	        TheLoai theloai = view.getTheLoaiForEdit();
 
 	        try {
 	            if (dao.update(theloai)) {

@@ -58,6 +58,20 @@ public class SachDAO {
 	    }
 	    return dsSach;
 	}
+	public String generateMaSach() throws SQLException {
+	    String sql = "SELECT MaSach FROM SACH ORDER BY MaSach DESC LIMIT 1";
+	    Connection conn = ConnectDB.getConnection();
+	    PreparedStatement ps = conn.prepareStatement(sql);
+	    ResultSet rs = ps.executeQuery();
+
+	    String maMoi = "S001";
+	    if (rs.next()) {
+	        String maCu = rs.getString("MaSach");
+	        int so = Integer.parseInt(maCu.substring(2));
+	        maMoi = String.format("S%03d", ++so);
+	    }
+	    return maMoi;
+	}
 	public List<Object[]> getAllSachForDisplay() throws SQLException {
 	    List<Object[]> result = new ArrayList<>();
 	    String sql = "SELECT s.TenSach, tg.TenTacGia, tl.TenTheLoai, s.GiaBan, s.imgpath "

@@ -3,12 +3,15 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
+import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 import DAO.KhachHangDAO;
 import View.CustomerManager;
 import model.KhachHang;
 import java.util.List;
+import java.sql.SQLIntegrityConstraintViolationException;
+
 public class KhachHangController implements ActionListener {
     private CustomerManager view;
     private KhachHangDAO dao;
@@ -84,28 +87,37 @@ public class KhachHangController implements ActionListener {
     }
 
     public void xoaKhachHang() {
-        try {
-            int selectedRow = view.getTable().getSelectedRow();
-            if (selectedRow < 0) {
-                JOptionPane.showMessageDialog(view, "Vui lòng chọn khách hàng cần xóa", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            
-            String maKH = view.getMaKH();
-            int confirm = JOptionPane.showConfirmDialog(view, 
-                    "Bạn có chắc chắn muốn xóa khách hàng này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-            
-            if (confirm == JOptionPane.YES_OPTION) {
-                if (dao.xoaKhachHang(maKH)) {
+        int selectedRow = view.getTable().getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(view, "Vui lòng chọn khách hàng cần xóa", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String maKH = view.getMaKH();
+        int confirm = JOptionPane.showConfirmDialog(view,
+                "Bạn có chắc chắn muốn xóa khách hàng này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                boolean xoaThanhCong = dao.xoaKhachHang(maKH);
+                if (xoaThanhCong) {
                     JOptionPane.showMessageDialog(view, "Xóa khách hàng thành công!");
                     loadAllKhachHang();
                     view.clearFields();
                 } else {
                     JOptionPane.showMessageDialog(view, "Xóa khách hàng thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
+            } catch (SQLException ex) {
+                if (ex.getMessage().contains("foreign key constraint fails")) {
+                    JOptionPane.showMessageDialog(view,
+                            "Không thể xóa khách hàng này vì đã có hóa đơn liên quan.",
+                            "Lỗi ràng buộc khóa ngoại", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(view,
+                            "Đã xảy ra lỗi: " + ex.getMessage(),
+                            "Lỗi hệ thống", JOptionPane.ERROR_MESSAGE);
+                }
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(view, "Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 

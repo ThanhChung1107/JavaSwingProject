@@ -2,6 +2,7 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
@@ -24,7 +25,12 @@ public class AuthorController implements ActionListener{
 		String cmd = e.getActionCommand();
 		switch(cmd) {
 		case "Thêm":
-			insertAuthor();
+			try {
+				insertAuthor();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			break;
 		case "Sửa":
 			updateAuthor();
@@ -37,8 +43,8 @@ public class AuthorController implements ActionListener{
 			break;
 		}
 	}
-	private void insertAuthor() {
-		TacGia tg = view.getAuthorFromInput();
+	private void insertAuthor() throws SQLException {
+		TacGia tg = view.getAuthorForAdd();
 		try {
 			for (int i = 0; i < view.tableModel.getRowCount(); i++) {
 	            if (tg.getMaTacGia().equals(view.tableModel.getValueAt(i, 0))) {
