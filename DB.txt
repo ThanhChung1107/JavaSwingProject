@@ -1,0 +1,157 @@
+create database if not exists QuanLyNhaSach character set utf8mb4 collate utf8mb4_unicode_ci;
+use QuanLyNhaSach;
+create table THELOAI (
+	MaTheLoai varchar(10) primary key,
+    TenTheLoai nvarchar(100) not null
+);
+-- Tạo bảng TACGIA
+CREATE TABLE TACGIA (
+    MaTacGia VARCHAR(10) PRIMARY KEY,
+    TenTacGia NVARCHAR(100) NOT NULL,
+    NgaySinh DATE,
+    ImgPath varchar(100)
+);
+
+-- Tạo bảng NHAXUATBAN
+CREATE TABLE NHAXUATBAN (
+    MaNXB VARCHAR(10) PRIMARY KEY,
+    TenNXB NVARCHAR(100) NOT NULL,
+    DiaChi NVARCHAR(255),
+    SoDienThoai VARCHAR(15),
+    Email VARCHAR(100)
+);
+
+-- Tạo bảng SACH
+CREATE TABLE SACH (
+    MaSach VARCHAR(10) PRIMARY KEY,
+    TenSach NVARCHAR(255) NOT NULL,
+    MaTheLoai VARCHAR(10),
+    MaTacGia VARCHAR(10),
+    MaNXB VARCHAR(10),
+    SoLuongTon INT DEFAULT 0,
+    GiaBan DECIMAL(12, 2) NOT NULL,
+    NgayXuatBan DATE,
+    imgpath varchar(100),
+    FOREIGN KEY (MaTheLoai) REFERENCES THELOAI(MaTheLoai),
+    FOREIGN KEY (MaTacGia) REFERENCES TACGIA(MaTacGia),
+    FOREIGN KEY (MaNXB) REFERENCES NHAXUATBAN(MaNXB)
+);
+
+-- Tạo bảng KHACHHANG
+CREATE TABLE KHACHHANG (
+    MaKH VARCHAR(10) PRIMARY KEY,
+    TenKH NVARCHAR(100) NOT NULL,
+    DiaChi NVARCHAR(255),
+    SoDienThoai VARCHAR(15),
+    Email VARCHAR(100),
+    NgaySinh DATE
+);
+
+-- Tạo bảng NHANVIEN
+CREATE TABLE NHANVIEN (
+    MaNV VARCHAR(10) PRIMARY KEY,
+    TenNV NVARCHAR(100) NOT NULL,
+    DiaChi NVARCHAR(255),
+    SoDienThoai VARCHAR(15),
+    Email VARCHAR(100),
+    NgaySinh DATE,
+    Luong DECIMAL(12, 2)
+);
+
+-- Tạo bảng NHACUNGCAP
+CREATE TABLE NHACUNGCAP (
+    MaNCC VARCHAR(10) PRIMARY KEY,
+    TenNCC NVARCHAR(100) NOT NULL,
+    DiaChi NVARCHAR(255),
+    SoDienThoai VARCHAR(15),
+    Email VARCHAR(100)
+);
+
+-- Tạo bảng HOADON
+CREATE TABLE HOADON (
+    MaHD VARCHAR(10) PRIMARY KEY,
+    MaKH VARCHAR(10),
+    MaNV VARCHAR(10),
+    NgayLap DATETIME DEFAULT CURRENT_TIMESTAMP,
+    TongTien DECIMAL(12, 2) DEFAULT 0,
+    GiamGia DECIMAL(12, 2) DEFAULT 0,
+    ThanhTien DECIMAL(12, 2) DEFAULT 0,
+    FOREIGN KEY (MaKH) REFERENCES KHACHHANG(MaKH),
+    FOREIGN KEY (MaNV) REFERENCES NHANVIEN(MaNV)
+);
+
+-- Tạo bảng CHITIETHOADON
+CREATE TABLE CHITIETHOADON (
+    MaHD VARCHAR(10),
+    MaSach VARCHAR(10),
+    SoLuong INT NOT NULL,
+    DonGia DECIMAL(12, 2) NOT NULL,
+    ThanhTien DECIMAL(12, 2) DEFAULT 0,
+    PRIMARY KEY (MaHD, MaSach),
+    FOREIGN KEY (MaHD) REFERENCES HOADON(MaHD),
+    FOREIGN KEY (MaSach) REFERENCES SACH(MaSach)
+);
+
+-- Tạo bảng PHIEUNHAP
+-- CREATE TABLE PHIEUNHAP (
+--     MaPN VARCHAR(10) PRIMARY KEY,
+--     MaNCC VARCHAR(10),
+--     MaNV VARCHAR(10),
+--     NgayNhap DATETIME DEFAULT CURRENT_TIMESTAMP,
+--     TongTien DECIMAL(12, 2) DEFAULT 0,
+--     FOREIGN KEY (MaNCC) REFERENCES NHACUNGCAP(MaNCC),
+--     FOREIGN KEY (MaNV) REFERENCES NHANVIEN(MaNV)
+-- );
+
+-- Tạo bảng CHITIETPHIEUNHAP
+-- CREATE TABLE CHITIETPHIEUNHAP (
+--     MaPN VARCHAR(10),
+--     MaSach VARCHAR(10),
+--     SoLuong INT NOT NULL,
+--     DonGia DECIMAL(12, 2) NOT NULL,
+--     ThanhTien DECIMAL(12, 2) DEFAULT 0,
+--     PRIMARY KEY (MaPN, MaSach),
+--     FOREIGN KEY (MaPN) REFERENCES PHIEUNHAP(MaPN),
+--     FOREIGN KEY (MaSach) REFERENCES SACH(MaSach)
+-- );
+CREATE TABLE ACCOUNT (
+    Username VARCHAR(50) PRIMARY KEY,
+    Password VARCHAR(255) NOT NULL,
+    Role ENUM('quanly', 'nhanvien') NOT NULL,
+    MaNV VARCHAR(10),
+    FOREIGN KEY (MaNV) REFERENCES NHANVIEN(MaNV)
+);
+INSERT INTO NHANVIEN (MaNV, TenNV, DiaChi, SoDienThoai, Email, NgaySinh, Luong)
+VALUES 
+('NV001', N'Nguyễn Văn A', N'123 Đường A, Quận 1, TP.HCM', '0909123456', 'a.nguyen@example.com', '1990-01-15', 12000000.00),
+('NV002', N'Trần Thị B', N'456 Đường B, Quận 3, TP.HCM', '0909876543', 'b.tran@example.com', '1992-06-20', 10000000.00),
+('NV003', N'Lê Văn C', N'789 Đường C, Quận 5, TP.HCM', '0912123456', 'c.le@example.com', '1988-11-05', 9500000.00);
+
+INSERT INTO ACCOUNT (Username, Password, Role, MaNV)
+VALUES 
+('quanly1', '1234', 'quanly', null),
+('nhanvien1', '1234', 'nhanvien', 'NV001'),
+('nhanvien2', '1234', 'nhanvien', 'NV002');
+INSERT INTO THELOAI (MaTheLoai, TenTheLoai) VALUES
+('TL001', 'Khoa học'),
+('TL002', 'Văn học'),
+('TL003', 'Lịch sử'),
+('TL004', 'Kinh tế');
+
+INSERT INTO TACGIA (MaTacGia, TenTacGia, NgaySinh) VALUES
+('TG001', 'Nguyễn Nhật Ánh', '1955-11-02'),
+('TG002', 'Hồ Chí Minh', '1890-05-19'),
+('TG003', 'Trịnh Công Sơn', '1939-02-28'),
+('TG004', 'Vũ Trọng Phụng', '1912-10-20');
+
+INSERT INTO NHAXUATBAN (MaNXB, TenNXB, DiaChi, SoDienThoai, Email) VALUES
+('NXB001', 'Nhà xuất bản Trẻ', 'Sài Gòn', '02838291634', 'nxb@tre.com.vn'),
+('NXB002', 'Nhà xuất bản Kim Đồng', 'Hà Nội', '02437459123', 'nxb@kimdong.com.vn'),
+('NXB003', 'Nhà xuất bản Dân trí', 'Hà Nội', '02437456123', 'nxb@dantri.com.vn');
+
+INSERT INTO SACH (MaSach, TenSach, MaTheLoai, MaTacGia, MaNXB, SoLuongTon, GiaBan, NgayXuatBan) VALUES
+('S001', 'Bé học toán', 'TL001', 'TG001', 'NXB001', 100, 150000, '2023-05-01'),
+('S002', 'Lịch sử Việt Nam', 'TL003', 'TG002', 'NXB002', 50, 200000, '2020-03-15'),
+('S003', 'Những bài hát hay', 'TL002', 'TG003', 'NXB003', 30, 120000, '2022-08-20'),
+('S004', 'Kinh tế học căn bản', 'TL004', 'TG004', 'NXB001', 70, 250000, '2021-06-10');
+
